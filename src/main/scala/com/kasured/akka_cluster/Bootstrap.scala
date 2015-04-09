@@ -2,9 +2,8 @@ package com.kasured.akka_cluster
 
 import java.net.InetAddress
 
-import akka.actor.{ActorSystem, AddressFromURIString}
+import akka.actor.{ActorSystem, AddressFromURIString, Props}
 import akka.cluster.Cluster
-import akka.kernel.Bootable
 import com.typesafe.config.ConfigFactory
 
 import scala.io.Source
@@ -13,7 +12,7 @@ import scala.util.Try
 /**
  * @author Evgeny Rusak
  */
-class Bootstrap extends Bootable {
+object Bootstrap {
 
   lazy val log = org.slf4j.LoggerFactory.getLogger(this.getClass.getName)
 
@@ -48,14 +47,19 @@ class Bootstrap extends Bootable {
   }
 
 
-  override def startup(): Unit = {
-      // Join the cluster with the specified seed nodes and block until termination
-      log.info(s"Joining cluster with seed nodes: $seeds")
-      Cluster.get(system).joinSeedNodes(seeds.toSeq)
-  }
+  def main(args: Array[String]): Unit = {
+    // Join the cluster with the specified seed nodes and block until termination
+    log.info(s"Joining cluster with seed nodes: $seeds")
+    Cluster.get(system).joinSeedNodes(seeds.toSeq)
 
-  override def shutdown(): Unit = {
-      system.terminate()
+    system.actorOf(Props[ClusterListener], name = "clusterListener")
+
+    system.registerOnTermination {
+      log.info("[Bye fellas]")
+    }
+
+    /*system.terminate()*/
+
   }
 
 }
