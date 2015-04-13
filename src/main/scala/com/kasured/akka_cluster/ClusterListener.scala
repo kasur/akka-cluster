@@ -29,7 +29,7 @@ class ClusterListener extends Actor with ActorLogging {
     case MemberUp(member) =>
       log.info("[Member is up: {}]", member.address)
     case MemberRemoved(member, previousState) =>
-      log.info("[Member has been removed: {} after ]", member.address, previousState)
+      log.info("[Member has been removed: {} after {}]", member.address, previousState)
     case UnreachableMember(member) =>
       log.info("[Member became unreachable: {}]", member.address)
     case _: MemberEvent => // ignoreMe

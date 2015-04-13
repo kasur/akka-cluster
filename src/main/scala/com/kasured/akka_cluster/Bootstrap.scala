@@ -52,7 +52,7 @@ object Bootstrap {
     sys addShutdownHook {
       log info "[Caught the hook and trying to shutdown]"
       system.terminate()
-      log.info("[Bye fellas]")
+      log info "[Bye fellas]"
     }
 
     // Join the cluster with the specified seed nodes and block until termination
