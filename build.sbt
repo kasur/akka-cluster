@@ -34,3 +34,5 @@ javaOptions in run ++= Seq(
 Keys.fork in run := true
 
 mainClass in (Compile, run) := Some("com.kasured.akka_cluster.Bootstrap")
+
+enablePlugins(JavaAppPackaging)
