@@ -17,7 +17,7 @@ object Bootstrap {
   lazy val log = org.slf4j.LoggerFactory.getLogger(this.getClass.getName)
 
   // Load the configuration
-  val config = ConfigFactory.load
+  val config = ConfigFactory.load("cluster")
 
   val appConfig = config getConfig "application"
 

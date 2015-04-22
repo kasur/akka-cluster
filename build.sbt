@@ -11,16 +11,20 @@ scalacOptions in Compile ++= Seq("-encoding", "UTF-8", "-target:jvm-1.7",
   "-Xlint"
 )
 
-libraryDependencies ++= Seq(
-  "com.typesafe.akka" %% "akka-actor" % "2.4-SNAPSHOT",
-  "com.typesafe.akka" %% "akka-cluster" % "2.4-SNAPSHOT",
-  "com.typesafe.akka" %% "akka-slf4j" % "2.4-SNAPSHOT",
+libraryDependencies ++= {
+  val Akka = "2.4-SNAPSHOT"
+  val Logback = "1.1.2"
+  Seq(
+    "com.typesafe.akka" %% "akka-actor" % Akka,
+    "com.typesafe.akka" %% "akka-cluster" % Akka,
+    "com.typesafe.akka" %% "akka-slf4j" % Akka,
 
-  /*enable it later to play with kamon and metrics collector*/
-  /*"io.kamon" % "sigar-loader" % "1.6.5-rev001",*/
+    /*enable it later to play with kamon and metrics collector*/
+    /*"io.kamon" % "sigar-loader" % "1.6.5-rev001",*/
 
-  "ch.qos.logback" % "logback-classic" % "1.1.2"
-)
+    "ch.qos.logback" % "logback-classic" % Logback
+  )
+}
 
 resolvers ++= Seq(
   "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/",
