@@ -1,42 +1,35 @@
+import sbt.Keys._
 
-name := "akka-cluster"
+import Dependencies._
 
-version := "1.0"
+lazy val commonSettings = Seq(
 
-scalaVersion := "2.11.6"
+  version := "1.0.0",
 
-scalacOptions in Compile ++= Seq("-encoding", "UTF-8", "-target:jvm-1.7",
-  "-deprecation", "-feature", "-unchecked",
-  "-Xlog-reflective-calls",
-  "-Xlint"
+  scalaVersion := "2.11.6",
+
+  scalacOptions in Compile ++= Seq("-encoding", "UTF-8", "-target:jvm-1.7",
+    "-deprecation", "-feature", "-unchecked",
+    "-Xlog-reflective-calls",
+    "-Xlint"
+  ),
+
+  javaOptions in run ++= Seq(
+    "-Xms128m", "-Xmx1024m"
+  ),
+
+  Keys.fork in run := true,
+
+  resolvers ++= Dependencies.reolutiionRepos
+
 )
 
-libraryDependencies ++= {
-  val Akka = "2.4-SNAPSHOT"
-  val Logback = "1.1.2"
-  Seq(
-    "com.typesafe.akka" %% "akka-actor" % Akka,
-    "com.typesafe.akka" %% "akka-cluster" % Akka,
-    "com.typesafe.akka" %% "akka-slf4j" % Akka,
+lazy val root = project.in(file("."))
+  .aggregate(cluster)
 
-    /*enable it later to play with kamon and metrics collector*/
-    /*"io.kamon" % "sigar-loader" % "1.6.5-rev001",*/
+lazy val cluster = project.in(file("cluster"))
+  .enablePlugins(JavaAppPackaging)
+  .settings(commonSettings: _*)
+  .settings(libraryDependencies ++= Seq(akka_cluster, akka_actor, akka_slf4j, logback))
+  .settings(mainClass in (Compile, run) := Some("com.kasured.akka_cluster.Bootstrap"))
 
-    "ch.qos.logback" % "logback-classic" % Logback
-  )
-}
-
-resolvers ++= Seq(
-  "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/",
-  "Typesafe Repository Snapshots" at "http://repo.typesafe.com/typesafe/snapshots/"
-)
-
-javaOptions in run ++= Seq(
-  "-Xms128m", "-Xmx1024m"
-)
-
-Keys.fork in run := true
-
-mainClass in (Compile, run) := Some("com.kasured.akka_cluster.Bootstrap")
-
-enablePlugins(JavaAppPackaging)
