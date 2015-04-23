@@ -20,4 +20,13 @@ object Dependencies {
 
   val logback = "ch.qos.logback" % "logback-classic" % Logback
 
+  val akka_http_core = "com.typesafe.akka" %% "akka-http-core-experimental" % Akka_Http
+  val akka_http = "com.typesafe.akka" %% "akka-http-experimental" % Akka_Http
+
+  val akka_stream = "com.typesafe.akka" %% "akka-stream-experimental" % Akka_Stream
+
+  val common_deps = Seq(akka_slf4j, logback)
+  val cluster_deps = common_deps ++ Seq(akka_cluster, akka_actor)
+  val akka_http_service_deps = common_deps ++ Seq(akka_actor, akka_http_core, akka_http, akka_stream)
+
 }

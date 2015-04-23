@@ -25,11 +25,17 @@ lazy val commonSettings = Seq(
 )
 
 lazy val root = project.in(file("."))
-  .aggregate(cluster)
+  .aggregate(cluster, http_service)
+  .settings(commonSettings: _*)
 
 lazy val cluster = project.in(file("cluster"))
   .enablePlugins(JavaAppPackaging)
   .settings(commonSettings: _*)
-  .settings(libraryDependencies ++= Seq(akka_cluster, akka_actor, akka_slf4j, logback))
-  .settings(mainClass in (Compile, run) := Some("com.kasured.akka_cluster.Bootstrap"))
+  .settings(libraryDependencies ++= cluster_deps)
+  .settings(mainClass in (Compile) := Some("com.kasured.akka_cluster.Bootstrap"))
 
+lazy val http_service = project.in(file("http_service"))
+  .enablePlugins(JavaAppPackaging)
+  .settings(commonSettings: _*)
+  .settings(libraryDependencies ++= akka_http_service_deps )
+  .settings(mainClass in (Compile) := Some("com.kasured.http_service.Bootstrap"))
