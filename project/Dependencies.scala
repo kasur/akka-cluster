@@ -25,8 +25,11 @@ object Dependencies {
 
   val akka_stream = "com.typesafe.akka" %% "akka-stream-experimental" % Akka_Stream
 
+  /*for ClusterClient usage scenarios*/
+  val akka_contrib = "com.typesafe.akka" %% "akka-contrib" % Akka
+
   val common_deps = Seq(akka_slf4j, logback)
-  val cluster_deps = common_deps ++ Seq(akka_cluster, akka_actor)
+  val cluster_deps = common_deps ++ Seq(akka_cluster, akka_actor, akka_contrib)
   val akka_http_service_deps = common_deps ++ Seq(akka_actor, akka_http_core, akka_http, akka_stream)
 
 }

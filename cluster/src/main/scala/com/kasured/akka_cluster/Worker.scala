@@ -5,7 +5,7 @@ import java.util.concurrent.TimeUnit
 import akka.actor.{Status, Stash, Actor}
 import akka.cluster.Cluster
 import akka.pattern.PipeToSupport
-import com.kasured.akka_cluster.Protocol.{PrimeResult, Initialize, Prime}
+import com.kasured.akka_cluster.Protocol._
 import com.kasured.akka_cluster.Worker.Continue
 
 import scala.concurrent.Future
@@ -79,9 +79,9 @@ class Worker extends Actor with Stash with PipeToSupport {
   }
 
   def initialized: Receive = {
-    case Prime(nth) =>
-      log.info(s"[$self started calculating prime for sequence number $nth]")
-      sender() ! PrimeResult(Worker.nthPrime(nth))
-      log.info(s"[$self finished calculating prime for sequence number $nth]")
+    case PrimeWrapper(request, source) =>
+      log.info(s"[$self started calculating prime for sequence number ${request.nth}]")
+      sender() ! PrimeResultWrapper(PrimeResult(Worker.nthPrime(request.nth)), source)
+      log.info(s"[$self finished calculating prime for sequence number ${request.nth}]")
   }
 }

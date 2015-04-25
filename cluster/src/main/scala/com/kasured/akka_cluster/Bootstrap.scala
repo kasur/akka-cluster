@@ -4,11 +4,9 @@ import java.net.InetAddress
 
 import akka.actor.{ActorSystem, AddressFromURIString, Props}
 import akka.cluster.Cluster
-import akka.util.Timeout
-import com.kasured.akka_cluster.Protocol.{PrimeResult, Prime}
+import akka.contrib.pattern.ClusterReceptionistExtension
 import com.typesafe.config.ConfigFactory
 
-import scala.concurrent.Await
 import scala.io.Source
 import scala.util.Try
 
@@ -60,20 +58,17 @@ object Bootstrap {
 
     // Join the cluster with the specified seed nodes and block until termination
     log info s"Joining cluster with seed nodes: $seeds"
-    Cluster get(system) joinSeedNodes(seeds.toSeq)
+    val cluster = Cluster.get(system)
+    cluster.joinSeedNodes(seeds.toSeq)
 
-    system actorOf(Props[ClusterListener], name = "clusterListener")
-    val worker = system actorOf(Props[Worker], name = "worker")
+    /*when the current system joined the cluster init its workers and dispatchers*/
+    cluster.registerOnMemberUp {
+      system actorOf(Props[ClusterListener], name = "clusterListener")
 
-    import akka.pattern.ask
-    import scala.concurrent.duration._
-    import scala.language.postfixOps
-
-    implicit val timeout = Timeout(1000 seconds)
-    val request = Prime(10001)
-    val result  = Await.result((worker ? request).mapTo[PrimeResult], Duration.Inf)
-
-    log.info(s"${request.nth}th prime is ${result.value}")
+      /*initializing dispatcher accessible to the access from the outer world*/
+      val dispatcherGateway = system actorOf(Props[DispatcherGateway], name = "dispatcherGateway")
+      ClusterReceptionistExtension(system).registerService(dispatcherGateway)
+    }
 
   }
 
