@@ -30,6 +30,6 @@ object Dependencies {
 
   val common_deps = Seq(akka_slf4j, logback)
   val cluster_deps = common_deps ++ Seq(akka_cluster, akka_actor, akka_contrib)
-  val akka_http_service_deps = common_deps ++ Seq(akka_actor, akka_http_core, akka_http, akka_stream)
+  val akka_http_service_deps = common_deps ++ Seq(akka_actor, akka_http_core, akka_http, akka_stream, akka_contrib)
 
 }

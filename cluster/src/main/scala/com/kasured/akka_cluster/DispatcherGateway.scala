@@ -9,21 +9,20 @@ import com.kasured.akka_cluster.Protocol.{Prime, PrimeResultWrapper, PrimeWrappe
  */
 class DispatcherGateway extends Actor with PipeToSupport {
 
-  import context._
-
   lazy val log = org.slf4j.LoggerFactory.getLogger(this.getClass.getName)
+
+  val worker = context actorOf(Props[Worker], name = "worker")
 
   override def receive: Receive = {
 
-    case request @ Prime(nth) =>
-
-      val worker = system actorOf(Props[Worker], name = "worker")
-      log.info(s"Dispatching work to the worker $worker")
-      worker ! PrimeWrapper(request, sender())
+    case request: Long =>
+      log.info(s"Receive the request $request from ${sender()} and dispatching work to the worker $worker")
+      worker ! PrimeWrapper(Prime(request), sender())
 
     case wrappedResult @ PrimeResultWrapper(result, source) =>
       log.info(s"Sending result ${result.value} to requester $source")
-      source ! result
+      source ! result.value
+
   }
 
 }

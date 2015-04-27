@@ -61,13 +61,17 @@ object Bootstrap {
     val cluster = Cluster.get(system)
     cluster.joinSeedNodes(seeds.toSeq)
 
-    /*when the current system joined the cluster init its workers and dispatchers*/
+    /* when the current system joined the cluster init its workers and dispatchers */
     cluster.registerOnMemberUp {
+
+      log.info(s"Cluster initialized and considered being up... Bootstrapping...")
+
       system actorOf(Props[ClusterListener], name = "clusterListener")
 
-      /*initializing dispatcher accessible to the access from the outer world*/
+      /* initializing dispatcher accessible to the access from the outer world */
       val dispatcherGateway = system actorOf(Props[DispatcherGateway], name = "dispatcherGateway")
       ClusterReceptionistExtension(system).registerService(dispatcherGateway)
+
     }
 
   }

@@ -2,8 +2,7 @@ package com.kasured.akka_cluster
 
 import java.util.concurrent.TimeUnit
 
-import akka.actor.{Status, Stash, Actor}
-import akka.cluster.Cluster
+import akka.actor.{Actor, Stash, Status}
 import akka.pattern.PipeToSupport
 import com.kasured.akka_cluster.Protocol._
 import com.kasured.akka_cluster.Worker.Continue
@@ -47,8 +46,6 @@ class Worker extends Actor with Stash with PipeToSupport {
   import context._
 
   lazy val log = org.slf4j.LoggerFactory.getLogger(this.getClass.getName)
-
-  val cluster = Cluster(context.system)
 
   self ! Initialize
 
