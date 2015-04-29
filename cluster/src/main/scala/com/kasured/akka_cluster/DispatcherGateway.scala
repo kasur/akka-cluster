@@ -11,11 +11,10 @@ class DispatcherGateway extends Actor with PipeToSupport {
 
   lazy val log = org.slf4j.LoggerFactory.getLogger(this.getClass.getName)
 
-  val worker = context actorOf(Props[Worker], name = "worker")
-
   override def receive: Receive = {
 
     case request: Long =>
+      val worker = context actorOf Props[Worker]
       log.info(s"Receive the request $request from ${sender()} and dispatching work to the worker $worker")
       worker ! PrimeWrapper(Prime(request), sender())
 
