@@ -9,7 +9,7 @@ import akka.stream.ActorFlowMaterializer
 import akka.util.Timeout
 import com.typesafe.config.ConfigFactory
 
-import scala.concurrent.Await
+import scala.concurrent.{ExecutionContext, Future, Await}
 import scala.io.Source
 
 
@@ -22,32 +22,41 @@ trait Service {
   private lazy val log = org.slf4j.LoggerFactory.getLogger(this.getClass.getName)
 
   implicit val clusterClient: ActorRef
+  implicit val executor: ExecutionContext
 
   val routes = {
     pathPrefix("v1" / "echo" / Rest ) { resp =>
       get {
-        complete { HttpResponse(entity = s"Echoing back with $resp \n") }
+        complete {
+          Future {
+            HttpResponse(entity = s"Echoing back with $resp \n")
+          }
+        }
       }
     } ~
     pathPrefix("v1" / "nthPrimeFor" / LongNumber ) { nth =>
       get {
         complete {
 
-          log.info(s"Trying to send message to cluster with $clusterClient")
-          import akka.pattern.ask
+          Future {
 
-          import scala.concurrent.duration._
-          import scala.language.postfixOps
-          implicit val timeout = Timeout(1000 seconds)
+            log.info(s"Trying to send message to cluster with $clusterClient")
+            import akka.pattern.ask
 
-          val value = Await.result({
-            (clusterClient ? ClusterClient.Send(
-              "/user/dispatcherGateway", nth, localAffinity = true
-            )).mapTo[Long]
-          }, Duration.Inf)
+            import scala.concurrent.duration._
+            import scala.language.postfixOps
+            implicit val timeout = Timeout(1000 seconds)
 
-          log.info(s"Result from remote cluster ${nth}th prime is $value")
-          HttpResponse(entity = s"${value.toString}\n")
+            val value = Await.result({
+              (clusterClient ? ClusterClient.Send(
+                "/user/dispatcherGateway", nth, localAffinity = true
+              )).mapTo[Long]
+            }, Duration.Inf)
+
+            log.info(s"Result from remote cluster ${nth}th prime is $value")
+            HttpResponse(entity = s"${value.toString}\n")
+
+          }
 
         }
       }

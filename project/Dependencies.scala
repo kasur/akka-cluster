@@ -7,8 +7,7 @@ object Dependencies {
 
 
   val reolutiionRepos = Seq(
-    "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/",
-    "Typesafe Repository Snapshots" at "http://repo.typesafe.com/typesafe/snapshots/"
+    "Akka Snapshot Repository" at "http://repo.akka.io/snapshots/"
   )
 
   val akka_actor = "com.typesafe.akka" %% "akka-actor" % Akka

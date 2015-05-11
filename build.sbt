@@ -15,7 +15,8 @@ lazy val commonSettings = Seq(
   ),
 
   javaOptions in run ++= Seq(
-    "-Xms128m", "-Xmx1024m"
+    "-Xms128m", "-Xmx1024m",
+    "-XX:PrintGCDetails", "-XX:PrintGCDateStamps", "-Xloggc:akka-cluster-log.gc"
   ),
 
   Keys.fork in run := true,
@@ -32,10 +33,10 @@ lazy val cluster = project.in(file("cluster"))
   .enablePlugins(JavaAppPackaging)
   .settings(commonSettings: _*)
   .settings(libraryDependencies ++= cluster_deps)
-  .settings(mainClass in (Compile) := Some("com.kasured.akka_cluster.Bootstrap"))
+  .settings(mainClass in Compile := Some("com.kasured.akka_cluster.Bootstrap"))
 
 lazy val http_service = project.in(file("http_service"))
   .enablePlugins(JavaAppPackaging)
   .settings(commonSettings: _*)
   .settings(libraryDependencies ++= akka_http_service_deps )
-  .settings(mainClass in (Compile) := Some("com.kasured.http_service.Bootstrap"))
+  .settings(mainClass in Compile := Some("com.kasured.http_service.Bootstrap"))
