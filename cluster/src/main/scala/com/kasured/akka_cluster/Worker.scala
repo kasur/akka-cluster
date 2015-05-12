@@ -60,7 +60,7 @@ class Worker extends Actor with Stash with PipeToSupport {
 
     case Initialize =>
       log.info(s"Starting actor initialization $self")
-      Future { TimeUnit.MILLISECONDS.sleep(Random.nextInt(2000)) } map {_ => Continue} pipeTo self
+      Future { TimeUnit.MILLISECONDS.sleep(Random.nextInt(100)) } map {_ => Continue} pipeTo self
 
     case Continue =>
       log.info(s"Becoming initialized $self")
